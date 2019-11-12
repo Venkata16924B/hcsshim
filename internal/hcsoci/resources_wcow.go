@@ -130,5 +130,25 @@ func allocateWindowsResources(ctx context.Context, coi *createOptionsInternal, r
 		}
 	}
 
+	if coi.HostingSystem != nil && coi.Spec.Windows != nil {
+		for _, d := range coi.Spec.Windows.Devices {
+			switch d.IDType {
+			case "vpci":
+				name := "SOME:UNIQUE:NAME"
+				v := hcsschema.VirtualPciDevice{
+					Functions: []hcsschema.VirtualPciFunction{
+						{
+							DeviceInstancePath: d.ID,
+						},
+					},
+				}
+				if err := coi.HostingSystem.AssignDevice(ctx, name, v); err != nil {
+					return err
+				}
+				resources.vpciDevices = append(resources.vpciDevices, name)
+			}
+		}
+	}
+
 	return nil
 }

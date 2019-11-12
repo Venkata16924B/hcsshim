@@ -86,7 +86,10 @@ const (
 	//
 	// Note: This annotation is in MB. OCI is in Bytes. When using this override
 	// the caller MUST use MB or sizing will be wrong.
-	annotationMemorySizeInMB = "io.microsoft.virtualmachine.computetopology.memory.sizeinmb"
+	annotationMemorySizeInMB         = "io.microsoft.virtualmachine.computetopology.memory.sizeinmb"
+	annotationMemoryLowMmioGapInMB   = "io.microsoft.virtualmachine.computetopology.memory.lowmmiogapinmb"
+	annotationMemoryHighMmioBaseInMB = "io.microsoft.virtualmachine.computetopology.memory.highmmiobaseinmb"
+	annotationMemoryHighMmioGapInMB  = "io.microsoft.virtualmachine.computetopology.memory.highmmiogapinmb"
 	// annotationProcessorCount overrides the hypervisor isolated vCPU count set
 	// via the OCI spec.
 	//
@@ -116,6 +119,8 @@ const (
 	annotationBootFilesRootPath          = "io.microsoft.virtualmachine.lcow.bootfilesrootpath"
 	annotationStorageQoSBandwidthMaximum = "io.microsoft.virtualmachine.storageqos.bandwidthmaximum"
 	annotationStorageQoSIopsMaximum      = "io.microsoft.virtualmachine.storageqos.iopsmaximum"
+
+	annotation
 )
 
 // parseAnnotationsBool searches `a` for `key` and if found verifies that the
@@ -315,6 +320,9 @@ func SpecToUVMCreateOpts(ctx context.Context, s *specs.Spec, id, owner string) (
 	if IsLCOW(s) {
 		lopts := uvm.NewDefaultOptionsLCOW(id, owner)
 		lopts.MemorySizeInMB = ParseAnnotationsMemory(ctx, s, annotationMemorySizeInMB, lopts.MemorySizeInMB)
+		lopts.LowMmioGapInMB = parseAnnotationsUint64(ctx, s.Annotations, annotationMemoryLowMmioGapInMB, lopts.LowMmioGapInMB)
+		lopts.HighMmioBaseInMB = parseAnnotationsUint64(ctx, s.Annotations, annotationMemoryHighMmioGapInMB, lopts.HighMmioBaseInMB)
+		lopts.HighMmioGapInMB = parseAnnotationsUint64(ctx, s.Annotations, annotationMemoryHighMmioBaseInMB, lopts.HighMmioGapInMB)
 		lopts.AllowOvercommit = parseAnnotationsBool(ctx, s.Annotations, annotationAllowOvercommit, lopts.AllowOvercommit)
 		lopts.EnableDeferredCommit = parseAnnotationsBool(ctx, s.Annotations, annotationEnableDeferredCommit, lopts.EnableDeferredCommit)
 		lopts.EnableColdDiscardHint = parseAnnotationsBool(ctx, s.Annotations, annotationEnableColdDiscardHint, lopts.EnableColdDiscardHint)
@@ -337,6 +345,9 @@ func SpecToUVMCreateOpts(ctx context.Context, s *specs.Spec, id, owner string) (
 	} else if IsWCOW(s) {
 		wopts := uvm.NewDefaultOptionsWCOW(id, owner)
 		wopts.MemorySizeInMB = ParseAnnotationsMemory(ctx, s, annotationMemorySizeInMB, wopts.MemorySizeInMB)
+		wopts.LowMmioGapInMB = parseAnnotationsUint64(ctx, s.Annotations, annotationMemoryLowMmioGapInMB, wopts.LowMmioGapInMB)
+		wopts.HighMmioBaseInMB = parseAnnotationsUint64(ctx, s.Annotations, annotationMemoryHighMmioGapInMB, wopts.HighMmioBaseInMB)
+		wopts.HighMmioGapInMB = parseAnnotationsUint64(ctx, s.Annotations, annotationMemoryHighMmioBaseInMB, wopts.HighMmioGapInMB)
 		wopts.AllowOvercommit = parseAnnotationsBool(ctx, s.Annotations, annotationAllowOvercommit, wopts.AllowOvercommit)
 		wopts.EnableDeferredCommit = parseAnnotationsBool(ctx, s.Annotations, annotationEnableDeferredCommit, wopts.EnableDeferredCommit)
 		wopts.ProcessorCount = ParseAnnotationsCPUCount(ctx, s, annotationProcessorCount, wopts.ProcessorCount)

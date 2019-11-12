@@ -27,4 +27,23 @@ type Memory2 struct {
 	// to the VM, allowing it to trim non-zeroed pages from the working set (if supported by
 	// the guest operating system).
 	EnableColdDiscardHint bool `json:"EnableColdDiscardHint,omitempty"`
+
+	// LowMmioGapInMB is the low MMIO region allocated below 4GB.
+	//
+	// TODO: This is pre-release support in schema 2.3. Need to add build number
+	// docs when a public build with this is out.
+	LowMmioGapInMB uint64 `json:",omitempty"`
+
+	// HighMmioBaseInMB is the high MMIO region allocated above 4GB (base and
+	// size).
+	//
+	// TODO: This is pre-release support in schema 2.3. Need to add build number
+	// docs when a public build with this is out.
+	HighMmioBaseInMB uint64 `json:",omitempty"`
+
+	// HighMmioGapInMB is the high MMIO region.
+	//
+	// TODO: This is pre-release support in schema 2.3. Need to add build number
+	// docs when a public build with this is out.
+	HighMmioGapInMB uint64 `json:",omitempty"`
 }

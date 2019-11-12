@@ -13,6 +13,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	hcsschema "github.com/Microsoft/hcsshim/internal/schema2"
+
 	"github.com/Microsoft/hcsshim/internal/log"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 )
@@ -133,6 +135,26 @@ func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, res
 				resources.plan9Mounts = append(resources.plan9Mounts, share)
 			}
 			coi.Spec.Mounts[i].Source = uvmPathForFile
+		}
+	}
+
+	if coi.HostingSystem != nil && coi.Spec.Windows != nil {
+		for _, d := range coi.Spec.Windows.Devices {
+			switch d.IDType {
+			case "vpci":
+				name := "SOME:UNIQUE:NAME"
+				v := hcsschema.VirtualPciDevice{
+					Functions: []hcsschema.VirtualPciFunction{
+						{
+							DeviceInstancePath: d.ID,
+						},
+					},
+				}
+				if err := coi.HostingSystem.AssignDevice(ctx, name, v); err != nil {
+					return err
+				}
+				resources.vpciDevices = append(resources.vpciDevices, name)
+			}
 		}
 	}
 

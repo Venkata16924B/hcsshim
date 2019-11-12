@@ -66,6 +66,8 @@ type Resources struct {
 	// scsiMounts is an array of the vhd's mounted into a utility VM to support
 	// scsi device passthrough.
 	scsiMounts []scsiMount
+
+	vpciDevices []string
 }
 
 type scsiMount struct {
@@ -166,6 +168,14 @@ func ReleaseResources(ctx context.Context, r *Resources, vm *uvm.UtilityVM, all 
 			return err
 		}
 		r.layers = nil
+	}
+
+	if vm != nil && len(r.vpciDevices) != 0 {
+		for _, name := range r.vpciDevices {
+			if err := vm.RemoveDevice(ctx, name); err != nil {
+				log.G(ctx).WithError(err).Warn("failed to remove vPCI device")
+			}
+		}
 	}
 
 	return nil

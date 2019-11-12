@@ -29,6 +29,10 @@ type Options struct {
 	// default.
 	MemorySizeInMB int32
 
+	LowMmioGapInMB   uint64
+	HighMmioBaseInMB uint64
+	HighMmioGapInMB  uint64
+
 	// Memory for UVM. Defaults to true. For physical backed memory, set to
 	// false.
 	AllowOvercommit bool
