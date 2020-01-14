@@ -120,7 +120,7 @@ const (
 	annotationStorageQoSBandwidthMaximum = "io.microsoft.virtualmachine.storageqos.bandwidthmaximum"
 	annotationStorageQoSIopsMaximum      = "io.microsoft.virtualmachine.storageqos.iopsmaximum"
 
-	annotation
+	// TODO katiewasnothere: annotations for gpu support
 )
 
 // parseAnnotationsBool searches `a` for `key` and if found verifies that the

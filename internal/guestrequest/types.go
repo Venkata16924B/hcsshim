@@ -72,7 +72,6 @@ const (
 	ResourceTypeNetworkNamespace  ResourceType = "NetworkNamespace"
 	ResourceTypeCombinedLayers    ResourceType = "CombinedLayers"
 	ResourceTypeVPMemDevice       ResourceType = "VPMemDevice"
-	ResourceTypeVPciDevice        ResourceType = "VPciDevice"
 )
 
 // GuestRequest is for modify commands passed to the guest.

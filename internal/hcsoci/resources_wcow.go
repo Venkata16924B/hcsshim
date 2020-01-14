@@ -130,7 +130,8 @@ func allocateWindowsResources(ctx context.Context, coi *createOptionsInternal, r
 		}
 	}
 
-	if coi.HostingSystem != nil && coi.Spec.Windows != nil {
+	// TODO katiewasnothere: remove thsi
+	/*if coi.HostingSystem != nil && coi.Spec.Windows != nil {
 		for _, d := range coi.Spec.Windows.Devices {
 			switch d.IDType {
 			case "vpci":
@@ -148,7 +149,7 @@ func allocateWindowsResources(ctx context.Context, coi *createOptionsInternal, r
 				resources.vpciDevices = append(resources.vpciDevices, name)
 			}
 		}
-	}
+	}*/
 
 	return nil
 }

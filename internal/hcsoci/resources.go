@@ -67,6 +67,7 @@ type Resources struct {
 	// scsi device passthrough.
 	scsiMounts []scsiMount
 
+	// vpciDevices is an array of vpci device names
 	vpciDevices []string
 }
 

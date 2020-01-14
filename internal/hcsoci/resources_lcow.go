@@ -142,7 +142,7 @@ func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, res
 		for _, d := range coi.Spec.Windows.Devices {
 			switch d.IDType {
 			case "vpci":
-				name := "SOME:UNIQUE:NAME"
+				name := "somename" //TODO katiewasnothere
 				v := hcsschema.VirtualPciDevice{
 					Functions: []hcsschema.VirtualPciFunction{
 						{

@@ -104,7 +104,7 @@ func NewDefaultOptionsLCOW(id, owner string) *OptionsLCOW {
 		ConsolePipe:           "",
 		SCSIControllerCount:   1,
 		UseGuestConnection:    true,
-		ExecCommandLine:       fmt.Sprintf("/bin/gcs -v4 -log-format json -loglevel %s", logrus.StandardLogger().Level.String()),
+		ExecCommandLine:       fmt.Sprintf("/bin/gcs -v4 -log-format json -loglevel %s -gcs-mem-limit-bytes 1048576000000", logrus.StandardLogger().Level.String()), //TODO katiewasnothere: remove the gcs limit
 		ForwardStdout:         false,
 		ForwardStderr:         true,
 		OutputHandler:         parseLogrus(id),
@@ -364,7 +364,7 @@ func CreateLCOW(ctx context.Context, opts *OptionsLCOW) (_ *UtilityVM, err error
 	}
 
 	kernelArgs += fmt.Sprintf(" nr_cpus=%d", opts.ProcessorCount)
-	kernelArgs += ` pci=off brd.rd_nr=0 pmtmr=0 -- ` + initArgs
+	kernelArgs += ` brd.rd_nr=0 pmtmr=0 -- ` + initArgs
 
 	if !opts.KernelDirect {
 		doc.VirtualMachine.Chipset.Uefi = &hcsschema.Uefi{
