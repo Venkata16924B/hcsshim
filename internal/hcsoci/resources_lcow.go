@@ -6,17 +6,16 @@ package hcsoci
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 
-	hcsschema "github.com/Microsoft/hcsshim/internal/schema2"
-
 	"github.com/Microsoft/hcsshim/internal/log"
+	hcsschema "github.com/Microsoft/hcsshim/internal/schema2"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
+	"github.com/pkg/errors"
 )
 
 const lcowMountPathPrefix = "/mounts/m%d"
@@ -142,7 +141,7 @@ func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, res
 		for _, d := range coi.Spec.Windows.Devices {
 			switch d.IDType {
 			case "vpci":
-				name := "somename" //TODO katiewasnothere
+				name := fmt.Sprintf("%v", coi.HostingSystem.VpciCounter())
 				v := hcsschema.VirtualPciDevice{
 					Functions: []hcsschema.VirtualPciFunction{
 						{
@@ -156,6 +155,20 @@ func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, res
 				resources.vpciDevices = append(resources.vpciDevices, name)
 			}
 		}
+
+		/*if _, ok := coi.Spec.Annotations["io.microsoft.container.allowgpu"]; ok {
+			// add SCSI device into the UVM only
+			// TODO: still need to update the path or to call ldconfig
+			nvidiaSupportVhdPath := filepath.Join(filepath.Dir(os.Args[0]), "nvidia-gpu-support.vhd")
+			if _, err := os.Stat(nvidiaSupportVhdPath); os.IsNotExist(err) {
+				return errors.Wrapf(err, "failed to add nvidia-gpu-support.vhd to uvm %s", coi.HostingSystem.ID())
+			}
+			uvmGpuPath := "/gpu"
+			_, _, err := coi.HostingSystem.AddSCSI(ctx, nvidiaSupportVhdPath, uvmGpuPath, true)
+			if err != nil {
+				return errors.Wrapf(err, "failed to add scsi device %s in the UVM %s at %s", nvidiaSupportVhdPath, coi.HostingSystem.ID(), uvmGpuPath)
+			}
+		}*/
 	}
 
 	return nil

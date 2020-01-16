@@ -277,10 +277,11 @@ func CreateLCOW(ctx context.Context, opts *OptionsLCOW) (_ *UtilityVM, err error
 	}
 
 	/*
-		// TODO do we need this for the controller at start time or is it dynamically added at modify?
-		if opts.LowMmioGapInMB > 0 || opts.HighMmioBaseInMB > 0 || opts.HighMmioGapInMB > 0 {
-			doc.VirtualMachine.Devices.VirtualPci = make(map[string]VirtualPciDevice)
-		}
+		//TODO katiewasnothere
+			// TODO do we need this for the controller at start time or is it dynamically added at modify?
+			if opts.LowMmioGapInMB > 0 || opts.HighMmioBaseInMB > 0 || opts.HighMmioGapInMB > 0 {
+				doc.VirtualMachine.Devices.VirtualPci = make(map[string]VirtualPciDevice)
+			}
 	*/
 
 	var kernelArgs string
