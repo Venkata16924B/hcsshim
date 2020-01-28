@@ -106,8 +106,8 @@ type UtilityVM struct {
 	// Plan9 are directories mapped into a Linux utility VM
 	plan9Counter uint64 // Each newly-added plan9 share has a counter used as its ID in the ResourceURI and for the name
 
-	// VPCI devices that are mapped into a Linux UVM
-	vpciCounter uint64 // Counter to generate a unique share name for each vpci device, accesses must be atomic
+	// GPU vpci devices that are mapped into a Linux UVM
+	gpuCounter uint64 // Counter to generate a unique share name for each nvidia gpu device, accesses must be atomic
 
 	namespaces map[string]*namespaceInfo
 

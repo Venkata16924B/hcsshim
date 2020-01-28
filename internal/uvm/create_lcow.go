@@ -104,7 +104,7 @@ func NewDefaultOptionsLCOW(id, owner string) *OptionsLCOW {
 		ConsolePipe:           "",
 		SCSIControllerCount:   1,
 		UseGuestConnection:    true,
-		ExecCommandLine:       fmt.Sprintf("/bin/gcs -v4 -log-format json -loglevel %s -gcs-mem-limit-bytes 1048576000000", logrus.StandardLogger().Level.String()), //TODO katiewasnothere: remove the gcs limit
+		ExecCommandLine:       fmt.Sprintf("/bin/gcs -v4 -log-format json -loglevel %s", logrus.StandardLogger().Level.String()),
 		ForwardStdout:         false,
 		ForwardStderr:         true,
 		OutputHandler:         parseLogrus(id),
@@ -275,14 +275,6 @@ func CreateLCOW(ctx context.Context, opts *OptionsLCOW) (_ *UtilityVM, err error
 			MaximumSizeBytes: uvm.vpmemMaxSizeBytes,
 		}
 	}
-
-	/*
-		//TODO katiewasnothere
-			// TODO do we need this for the controller at start time or is it dynamically added at modify?
-			if opts.LowMmioGapInMB > 0 || opts.HighMmioBaseInMB > 0 || opts.HighMmioGapInMB > 0 {
-				doc.VirtualMachine.Devices.VirtualPci = make(map[string]VirtualPciDevice)
-			}
-	*/
 
 	var kernelArgs string
 	switch opts.PreferredRootFSType {

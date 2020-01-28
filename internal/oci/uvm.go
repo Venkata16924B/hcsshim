@@ -119,8 +119,7 @@ const (
 	annotationBootFilesRootPath          = "io.microsoft.virtualmachine.lcow.bootfilesrootpath"
 	annotationStorageQoSBandwidthMaximum = "io.microsoft.virtualmachine.storageqos.bandwidthmaximum"
 	annotationStorageQoSIopsMaximum      = "io.microsoft.virtualmachine.storageqos.iopsmaximum"
-
-	// TODO katiewasnothere: annotations for gpu support
+	annotationDisableKernelDirectBoot    = "io.microsoft.virtualmachine.disablekerneldirect"
 )
 
 // parseAnnotationsBool searches `a` for `key` and if found verifies that the
@@ -339,6 +338,10 @@ func SpecToUVMCreateOpts(ctx context.Context, s *specs.Spec, id, owner string) (
 			lopts.RootFSFile = uvm.InitrdFile
 		case uvm.PreferredRootFSTypeVHD:
 			lopts.RootFSFile = uvm.VhdFile
+		}
+		if parseAnnotationsBool(ctx, s.Annotations, annotationDisableKernelDirectBoot, false) {
+			lopts.KernelDirect = false
+			lopts.KernelFile = uvm.KernelFile
 		}
 		lopts.BootFilesPath = parseAnnotationsString(s.Annotations, annotationBootFilesRootPath, lopts.BootFilesPath)
 		return lopts, nil

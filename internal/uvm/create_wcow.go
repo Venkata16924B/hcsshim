@@ -196,13 +196,6 @@ func CreateWCOW(ctx context.Context, opts *OptionsWCOW) (_ *UtilityVM, err error
 
 	uvm.scsiLocations[0][0].hostPath = doc.VirtualMachine.Devices.Scsi["0"].Attachments["0"].Path
 
-	/*
-		// TODO do we need this for the controller at start time or is it dynamically added at modify?
-		if opts.LowMmioGapInMB > 0 || opts.HighMmioBaseInMB > 0 || opts.HighMmioGapInMB > 0 {
-			doc.VirtualMachine.Devices.VirtualPci = make(map[string]VirtualPciDevice)
-		}
-	*/
-
 	fullDoc, err := mergemaps.MergeJSON(doc, ([]byte)(opts.AdditionHCSDocumentJSON))
 	if err != nil {
 		return nil, fmt.Errorf("failed to merge additional JSON '%s': %s", opts.AdditionHCSDocumentJSON, err)

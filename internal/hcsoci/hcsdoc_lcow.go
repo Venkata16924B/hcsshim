@@ -29,13 +29,11 @@ func createLCOWSpec(coi *createOptionsInternal) (*specs.Spec, error) {
 	spec.Windows = nil
 	if coi.Spec.Windows != nil {
 		setWindowsNetworkNamespace(coi, spec)
-		// spec.Windows.Devices = coi.Spec.Windows.Devices
+		spec.Windows.Devices = coi.Spec.Windows.Devices
 	}
 
 	// Hooks are not supported (they should be run in the host)
 	spec.Hooks = nil
-
-	//TODO: katiewasnothere, hooks are not supported
 
 	// Clear unsupported features
 	spec.Linux.CgroupsPath = "" // GCS controls its cgroups hierarchy on its own.
