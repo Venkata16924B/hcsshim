@@ -49,6 +49,10 @@ type LCOWMappedVPMemDevice struct {
 	MountPath    string `json:"MountPath,omitempty"`
 }
 
+type LCOWMappedVPciDevice struct {
+	VmbusUuid string `json:"VmbusUuid,omitempty"`
+}
+
 type LCOWNetworkAdapter struct {
 	NamespaceID     string `json:",omitempty"`
 	ID              string `json:",omitempty"`
@@ -72,6 +76,7 @@ const (
 	ResourceTypeNetworkNamespace  ResourceType = "NetworkNamespace"
 	ResourceTypeCombinedLayers    ResourceType = "CombinedLayers"
 	ResourceTypeVPMemDevice       ResourceType = "VPMemDevice"
+	ResourceTypeVPciDevice        ResourceType = "VPciDevice"
 )
 
 // GuestRequest is for modify commands passed to the guest.
