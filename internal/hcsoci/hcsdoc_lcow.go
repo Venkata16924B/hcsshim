@@ -25,7 +25,7 @@ func createLCOWSpec(coi *createOptionsInternal) (*specs.Spec, error) {
 	}
 
 	// Linux containers don't care about Windows aspects of the spec except the
-	// network namespace
+	// network namespace and windows devices
 	spec.Windows = nil
 	if coi.Spec.Windows != nil {
 		setWindowsNetworkNamespace(coi, spec)

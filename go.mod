@@ -19,6 +19,7 @@ require (
 	github.com/godbus/dbus v4.1.0+incompatible // indirect
 	github.com/gogo/googleapis v1.2.0 // indirect
 	github.com/gogo/protobuf v1.2.1
+	github.com/google/uuid v1.1.1
 	github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce // indirect
 	github.com/hashicorp/go-multierror v0.0.0-20161216184304-ed905158d874 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect

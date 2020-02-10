@@ -120,6 +120,7 @@ const (
 	annotationStorageQoSBandwidthMaximum = "io.microsoft.virtualmachine.storageqos.bandwidthmaximum"
 	annotationStorageQoSIopsMaximum      = "io.microsoft.virtualmachine.storageqos.iopsmaximum"
 	annotationDisableKernelDirectBoot    = "io.microsoft.virtualmachine.disablekerneldirect"
+	annotationVPciEnabled                = "io.microsoft.virtualmachine.vpcienabled"
 )
 
 // parseAnnotationsBool searches `a` for `key` and if found verifies that the
@@ -339,6 +340,8 @@ func SpecToUVMCreateOpts(ctx context.Context, s *specs.Spec, id, owner string) (
 		case uvm.PreferredRootFSTypeVHD:
 			lopts.RootFSFile = uvm.VhdFile
 		}
+		lopts.VPciEnabled = parseAnnotationsBool(ctx, s.Annotations, annotationVPciEnabled, lopts.VPciEnabled)
+		// TODO katiewasnothere: this should be removed when direct boot supports MTRR and PAT
 		if parseAnnotationsBool(ctx, s.Annotations, annotationDisableKernelDirectBoot, false) {
 			lopts.KernelDirect = false
 			lopts.KernelFile = uvm.KernelFile

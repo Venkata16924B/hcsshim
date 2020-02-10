@@ -69,6 +69,7 @@ type OptionsLCOW struct {
 	VPMemSizeBytes        uint64              // Size of the VPMem devices. Defaults to `DefaultVPMemSizeBytes`.
 	PreferredRootFSType   PreferredRootFSType // If `KernelFile` is `InitrdFile` use `PreferredRootFSTypeInitRd`. If `KernelFile` is `VhdFile` use `PreferredRootFSTypeVHD`
 	EnableColdDiscardHint bool                // Whether the HCS should use cold discard hints. Defaults to false
+	VPciEnabled           bool                // Whether the kenerl should enable pci
 }
 
 // defaultLCOWOSBootFilesPath returns the default path used to locate the LCOW
@@ -112,6 +113,7 @@ func NewDefaultOptionsLCOW(id, owner string) *OptionsLCOW {
 		VPMemSizeBytes:        DefaultVPMemSizeBytes,
 		PreferredRootFSType:   PreferredRootFSTypeInitRd,
 		EnableColdDiscardHint: false,
+		VPciEnabled:           false,
 	}
 
 	// LCOW has more reliable behavior with the external bridge.
@@ -332,6 +334,10 @@ func CreateLCOW(ctx context.Context, opts *OptionsLCOW) (_ *UtilityVM, err error
 
 	if opts.KernelBootOptions != "" {
 		kernelArgs += " " + opts.KernelBootOptions
+	}
+
+	if !opts.VPciEnabled {
+		kernelArgs += `pci=off`
 	}
 
 	// Inject initial entropy over vsock during init launch.
