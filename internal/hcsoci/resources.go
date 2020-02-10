@@ -174,7 +174,7 @@ func ReleaseResources(ctx context.Context, r *Resources, vm *uvm.UtilityVM, all 
 	if vm != nil {
 		for _, name := range r.vpciDevices {
 			if err := vm.RemoveDevice(ctx, name); err != nil {
-				log.G(ctx).WithError(err).Warn("failed to remove vPCI device")
+				log.G(ctx).WithError(err).Warn("failed to remove VPCI device")
 			}
 		}
 	}

@@ -20,6 +20,19 @@ import (
 
 const lcowMountPathPrefix = "/mounts/m%d"
 const lcowGlobalMountPrefix = "/run/mounts/m%d"
+const lcowNvidiaMountPath = "/run/nvidia"
+
+func getNvidiaGPUVHDPath(coi *createOptionsInternal) (string, error) {
+	gpuVHDPath, ok := coi.Spec.Annotations["io.microsoft.lcow.nvidiagpuvhdpath"]
+	if !ok || gpuVHDPath == "" {
+		// default path was not set in config file, switch to default
+		gpuVHDPath = filepath.Join(filepath.Dir(os.Args[0]), "nvidiagpu.vhd")
+	}
+	if _, err := os.Stat(gpuVHDPath); err != nil {
+		return "", errors.Wrapf(err, "failed to find nvidia gpu support vhd %s", gpuVHDPath)
+	}
+	return gpuVHDPath, nil
+}
 
 func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, resources *Resources) error {
 	if coi.Spec.Root == nil {
@@ -137,11 +150,11 @@ func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, res
 		}
 	}
 
-	addGpuVhd := false
+	addNvidiaVHD := false
 	for i, d := range coi.Spec.Windows.Devices {
 		switch d.IDType {
 		case "gpu":
-			addGpuVhd = true
+			addNvidiaVHD = true
 			v := hcsschema.VirtualPciDevice{
 				Functions: []hcsschema.VirtualPciFunction{
 					{
@@ -149,23 +162,23 @@ func allocateLinuxResources(ctx context.Context, coi *createOptionsInternal, res
 					},
 				},
 			}
-			vmbusUuid, err := coi.HostingSystem.AssignDevice(ctx, v)
+			vmBusGUID, err := coi.HostingSystem.AssignDevice(ctx, v)
 			if err != nil {
 				return err
 			}
-			resources.vpciDevices = append(resources.vpciDevices, vmbusUuid)
+			resources.vpciDevices = append(resources.vpciDevices, vmBusGUID)
 
 			// update device ID so the gcs knows which nvidia devices to map into the container
-			coi.Spec.Windows.Devices[i].ID = vmbusUuid
+			coi.Spec.Windows.Devices[i].ID = vmBusGUID
 		}
 	}
 
-	if addGpuVhd {
-		nvidiaSupportVhdPath, err := getNvidiaGpuVhdPath(coi)
+	if addNvidiaVHD {
+		nvidiaSupportVhdPath, err := getNvidiaGPUVHDPath(coi)
 		if err != nil {
 			return errors.Wrapf(err, "failed to add nvidia vhd to %v", coi.HostingSystem.ID())
 		}
-		_, _, err = coi.HostingSystem.AddSCSI(ctx, nvidiaSupportVhdPath, lcowNvidiaMountPath, true)
+		_, _, _, err = coi.HostingSystem.AddSCSI(ctx, nvidiaSupportVhdPath, lcowNvidiaMountPath, true)
 		if err != nil {
 			return errors.Wrapf(err, "failed to add scsi device %s in the UVM %s at %s", nvidiaSupportVhdPath, coi.HostingSystem.ID(), lcowNvidiaMountPath)
 		}
