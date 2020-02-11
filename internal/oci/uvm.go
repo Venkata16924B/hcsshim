@@ -78,9 +78,11 @@ const (
 	// used via OCI runtimes and rather use
 	// `spec.Windows.Resources.Storage.Iops`.
 	AnnotationContainerStorageQoSIopsMaximum = "io.microsoft.container.storage.qos.iopsmaximum"
-	annotationAllowOvercommit                = "io.microsoft.virtualmachine.computetopology.memory.allowovercommit"
-	annotationEnableDeferredCommit           = "io.microsoft.virtualmachine.computetopology.memory.enabledeferredcommit"
-	annotationEnableColdDiscardHint          = "io.microsoft.virtualmachine.computetopology.memory.enablecolddiscardhint"
+	// AnnotationNvidiaGPUVHDPath overrides the default path to search for the nvidia gpu vhd
+	AnnotationNvidiaGPUVHDPath      = "io.microsoft.lcow.nvidiagpuvhdpath"
+	annotationAllowOvercommit       = "io.microsoft.virtualmachine.computetopology.memory.allowovercommit"
+	annotationEnableDeferredCommit  = "io.microsoft.virtualmachine.computetopology.memory.enabledeferredcommit"
+	annotationEnableColdDiscardHint = "io.microsoft.virtualmachine.computetopology.memory.enablecolddiscardhint"
 	// annotationMemorySizeInMB overrides the container memory size set via the
 	// OCI spec.
 	//
@@ -382,6 +384,10 @@ func UpdateSpecFromOptions(s specs.Spec, opts *runhcsopts.Options) specs.Spec {
 
 	if _, ok := s.Annotations[annotationMemorySizeInMB]; !ok && opts.VmMemorySizeInMb != 0 {
 		s.Annotations[annotationMemorySizeInMB] = strconv.FormatInt(int64(opts.VmMemorySizeInMb), 10)
+	}
+
+	if _, ok := s.Annotations[AnnotationNvidiaGPUVHDPath]; !ok && opts.NvidiaGPUVHDPath != "" {
+		s.Annotations[AnnotationNvidiaGPUVHDPath] = opts.NvidiaGPUVHDPath
 	}
 
 	return s

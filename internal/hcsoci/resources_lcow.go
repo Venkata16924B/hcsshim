@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/Microsoft/hcsshim/internal/log"
+	"github.com/Microsoft/hcsshim/internal/oci"
 	hcsschema "github.com/Microsoft/hcsshim/internal/schema2"
 	specs "github.com/opencontainers/runtime-spec/specs-go"
 	"github.com/pkg/errors"
@@ -23,7 +24,7 @@ const lcowGlobalMountPrefix = "/run/mounts/m%d"
 const lcowNvidiaMountPath = "/run/nvidia"
 
 func getNvidiaGPUVHDPath(coi *createOptionsInternal) (string, error) {
-	gpuVHDPath, ok := coi.Spec.Annotations["io.microsoft.lcow.nvidiagpuvhdpath"]
+	gpuVHDPath, ok := coi.Spec.Annotations[oci.AnnotationNvidiaGPUVHDPath]
 	if !ok || gpuVHDPath == "" {
 		// default path was not set in config file, switch to default
 		gpuVHDPath = filepath.Join(filepath.Dir(os.Args[0]), "nvidiagpu.vhd")
